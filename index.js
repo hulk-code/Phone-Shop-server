@@ -47,6 +47,12 @@ async function run() {
     //   const result=await cardsCollection.findOne(query)
     //   res.send(result)
     // })
+    app.get('/mobilebrand  ' ,async( req ,res)=>{
+      const cursor=cardsCollection.find();
+     const result=await cursor.toArray()
+     res.send(result)
+     
+   })
 
     app.get('/mobilebrand/:id' ,async( req ,res)=>{
       const category=req.params.id
@@ -62,8 +68,23 @@ async function run() {
      res.send(result)
      
    })
+ 
    
+
+
+
    app.get('/brandName/:id' , async(req ,res)=>{
+    const id=req.params.id;
+    const query={
+      _id : new ObjectId(id)
+    }
+    const result=await productsCollection.findOne(query)
+    res.send(result);
+  })
+
+
+
+   app.get('/mobilebrand/:id' , async(req ,res)=>{
     const id=req.params.id;
     const query={
       _id : new ObjectId(id)
@@ -72,28 +93,33 @@ async function run() {
     res.send(result);
   })
 
-  app.put('/mobilebrand/:id', async (req, res) => {
-    const updatedProduct = req.body;
-    const productId = req.params.id;
-  
-    try {
-      const filter = { _id: new ObjectId(productId) }; 
-      const updateDoc = {
-        $set: updatedProduct, 
-      };
-  
-      const result = await cardsCollection.updateOne(filter, updateDoc);
-  
-      if (result.modifiedCount === 1) {
-        res.status(200).json({ message: 'Product updated successfully' });
-      } else {
-        res.status(404).json({ message: 'Product not found' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
+
+
+app.patch('/mobilebrand/:id', async (req, res) => {
+  const updateDoc = req.body;
+  const productId = req.params.id;
+
+
+  const filter = { _id: new ObjectId(productId) };
+  const options = { upsert: true }; 
+
+  const updatedData = {
+    $set: {
+      Name: updateDoc.name, 
+      BrandName: updateDoc.BrandName,
+      Type: updateDoc.Type,
+      Image: updateDoc.Image,
+      Details: updateDoc.Details,
+      Price: updateDoc.Price,
+      Rating: updateDoc.Rating,
+      category: updateDoc.category
     }
-  });
+  };
+
+  const result = await cardsCollection.updateOne(filter, updatedData, options);
+  res.send(result);
+});
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
