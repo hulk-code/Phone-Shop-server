@@ -28,7 +28,7 @@ async function run() {
 
     const productsCollection=client.db('MobileShop').collection('categoryData')
     const cardsCollection=client.db('MobileShop').collection('productData')
-   
+   //add product by form
     app.post('/mobilebrand' , async(req ,res) =>{
      const newProduct=req.body;
      console.log(newProduct)
@@ -36,15 +36,18 @@ async function run() {
      res.send(result)
 
     })
-    app.get('/mobilebrand/:id' , async(req ,res)=>{
-      const id=req .params.id;
-      const query={
-        _id:new ObjectId(id)
 
-      }
-      const result=await cardsCollection.findOne(query)
-      res.send(result)
-    })
+
+    // app.get('/mobilebrand/:id' , async(req ,res)=>{
+    //   const id=req .params.id;
+    //   const query={
+    //     _id:new ObjectId(id)
+
+    //   }
+    //   const result=await cardsCollection.findOne(query)
+    //   res.send(result)
+    // })
+
     app.get('/mobilebrand/:id' ,async( req ,res)=>{
       const category=req.params.id
       const filter={category}
@@ -52,13 +55,45 @@ async function run() {
       const result=await cursor.toArray()
       res.send(result)
     })
+
     app.get('/brandName' ,async( req ,res)=>{
       const cursor=productsCollection.find();
      const result=await cursor.toArray()
      res.send(result)
      
    })
-    
+   
+   app.get('/brandName/:id' , async(req ,res)=>{
+    const id=req.params.id;
+    const query={
+      _id : new ObjectId(id)
+    }
+    const result=await cardsCollection.findOne(query)
+    res.send(result);
+  })
+
+  app.put('/mobilebrand/:id', async (req, res) => {
+    const updatedProduct = req.body;
+    const productId = req.params.id;
+  
+    try {
+      const filter = { _id: new ObjectId(productId) }; 
+      const updateDoc = {
+        $set: updatedProduct, 
+      };
+  
+      const result = await cardsCollection.updateOne(filter, updateDoc);
+  
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ message: 'Product updated successfully' });
+      } else {
+        res.status(404).json({ message: 'Product not found' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
