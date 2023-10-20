@@ -131,8 +131,6 @@ res.send(result);
 app.put('/mobilebrand/:id', async (req, res) => {
   const updateDoc = req.body;
   const productId = req.params.id;
-
-
   const filter = { _id: new ObjectId(productId) };
   const options = { upsert: true }; 
 
