@@ -26,7 +26,16 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
+    const productsCollection=client.db('MobileShop').collection('categoryData')
+    const cardsCollection=client.db('MobileShop').collection('productData')
+   
+    app.post('/mobilebrand' , async(req ,res) =>{
+     const newProduct=req.body;
+     console.log(newProduct)
+     const result=await cardsCollection.insertOne(newProduct)
+     res.send(result)
 
+    })
     
 
     // Send a ping to confirm a successful connection
