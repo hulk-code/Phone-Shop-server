@@ -27,7 +27,8 @@ async function run() {
     // await client.connect();
 
     const productsCollection=client.db('MobileShop').collection('categoryData')
-    const cardsCollection=client.db('MobileShop').collection('productData')
+    const cardsCollection=client.db('MobileShop').collection('productData');
+    const addToCartCollection=client.db('MobileShop').collection('addToCartData');
    //add product by form
     app.post('/mobilebrand' , async(req ,res) =>{
      const newProduct=req.body;
@@ -37,16 +38,48 @@ async function run() {
 
     })
 
+// get mobile details from single card
+    app.get('/mobileDetails/:id' , async(req ,res)=>{
+      const id=req .params.id;
+      const query={
+        _id:new ObjectId(id)
 
-    // app.get('/mobilebrand/:id' , async(req ,res)=>{
-    //   const id=req .params.id;
-    //   const query={
-    //     _id:new ObjectId(id)
+      }
+      const result=await cardsCollection.findOne(query)
+      res.send(result)
+    })
 
-    //   }
-    //   const result=await cardsCollection.findOne(query)
-    //   res.send(result)
-    // })
+    // post addtocart data 
+app.post('/addToCart',async(req,res) =>{
+  const {Name, BrandNAme, Types,Image, Details, Rating,category} = req.body;
+  const document = {
+    _id :new ObjectId(),
+    Name,
+    BrandNAme,
+    Types,
+    Image,
+    Details,
+    Rating,
+    category
+  }
+  const result = await addToCartCollection.insertOne(document);
+  res.send(result);
+})
+
+// get add to cart data from database
+app.get('/addToCart', async(req,res)=>{
+  const cursor=addToCartCollection.find();
+     const result=await cursor.toArray()
+     res.send(result)
+})
+
+// Delete add to cart single card
+app.delete('/addTocart/:id',async(req,res)=>{
+const id = req.params.id;
+const query = {_id: new ObjectId(id)};
+const result = await addToCartCollection.deleteOne(query);
+res.send(result);
+})
     app.get('/mobilebrand  ' ,async( req ,res)=>{
       const cursor=cardsCollection.find();
      const result=await cursor.toArray()
@@ -95,7 +128,7 @@ async function run() {
 
 
 
-app.patch('/mobilebrand/:id', async (req, res) => {
+app.put('/mobilebrand/:id', async (req, res) => {
   const updateDoc = req.body;
   const productId = req.params.id;
 
