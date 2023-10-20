@@ -45,6 +45,19 @@ async function run() {
       const result=await cardsCollection.findOne(query)
       res.send(result)
     })
+    app.get('/mobilebrand/:id' ,async( req ,res)=>{
+      const category=req.params.id
+      const filter={category}
+       const cursor=cardsCollection.find(filter);
+      const result=await cursor.toArray()
+      res.send(result)
+    })
+    app.get('/brandName' ,async( req ,res)=>{
+      const cursor=productsCollection.find();
+     const result=await cursor.toArray()
+     res.send(result)
+     
+   })
     
 
     // Send a ping to confirm a successful connection
