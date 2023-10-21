@@ -51,26 +51,30 @@ async function run() {
 
     // post addtocart data 
 app.post('/addToCart',async(req,res) =>{
-  const {Name, BrandNAme, Types,Image, Details, Rating,category} = req.body;
+
+  const {Name, BrandName, Type,email,Image, Details, Rating,category} = req.body;
   const document = {
     _id :new ObjectId(),
     Name,
-    BrandNAme,
-    Types,
+    BrandName,
+    Type,
     Image,
     Details,
     Rating,
+    email,
     category
   }
   const result = await addToCartCollection.insertOne(document);
   res.send(result);
 })
 
-// get add to cart data from database
-app.get('/addToCart', async(req,res)=>{
-  const cursor=addToCartCollection.find();
-     const result=await cursor.toArray()
-     res.send(result)
+
+app.get('/addToCart',async(req, res)=>{
+  const email = req.query.email;
+  console.log(email);
+  const query = { email : email}
+  const result = await addToCartCollection.find(query).toArray();
+  res.send(result);
 })
 
 // Delete add to cart single card
