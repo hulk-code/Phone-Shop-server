@@ -30,6 +30,7 @@ async function run() {
     const cardsCollection=client.db('MobileShop').collection('productData');
     const addToCartCollection=client.db('MobileShop').collection('addToCartData');
    //add product by form
+   
     app.post('/mobilebrand' , async(req ,res) =>{
      const newProduct=req.body;
      console.log(newProduct)
